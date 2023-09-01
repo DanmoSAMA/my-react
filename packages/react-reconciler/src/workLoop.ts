@@ -1,14 +1,41 @@
 import { beginWork } from './beginWork';
 import { completeWork } from './completeWork';
-import { FiberNode } from './fiber';
+import { FiberNode, FiberRootNode, createWorkInProgress } from './fiber';
+import { HostRoot } from './workTags';
 let workInProgress: FiberNode | null = null;
 
 // 初始化
-function prepareFreshStack(fiber: FiberNode) {
-	workInProgress = fiber;
+function prepareFreshStack(root: FiberRootNode) {
+	workInProgress = createWorkInProgress(root.current, {});
 }
 
-function renderRoot(root: FiberNode) {
+// 连接刚创建的container，和renderRoot（串联功能）
+export function scheduleUpdateOnFiber(fiber: FiberNode) {
+	// Todo：调度功能
+	//
+	// 无论是哪个结点触发了更新，都要向上遍历到根结点
+	const root = markUpdateFromFiberToRoot(fiber);
+	renderRoot(root);
+}
+
+// 向上遍历到根结点，并返回
+function markUpdateFromFiberToRoot(fiber: FiberNode) {
+	let node = fiber;
+	let parent = node.return;
+
+	while (parent) {
+		node = parent;
+		parent = parent.return;
+	}
+
+	if (node.tag === HostRoot) {
+		// 返回FiberRootNode
+		return node.stateNode;
+	}
+	return null;
+}
+
+function renderRoot(root: FiberRootNode) {
 	prepareFreshStack(root);
 
 	while (true) {
