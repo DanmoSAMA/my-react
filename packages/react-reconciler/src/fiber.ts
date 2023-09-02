@@ -26,6 +26,8 @@ export class FiberNode {
 	alternate: FiberNode | null;
 	// 保存标记，副作用
 	flags: Flags;
+	// 子树中包含的flags，用于冒泡
+	subtreeFlags: Flags;
 	updateQueue: unknown;
 
 	constructor(tag: WorkTag, pendingProps: Props, key: Key) {
@@ -50,6 +52,7 @@ export class FiberNode {
 
 		this.alternate = null;
 		this.flags = NoFlags;
+		this.subtreeFlags = NoFlags;
 	}
 }
 
@@ -85,6 +88,7 @@ export const createWorkInProgress = (
 		wip.pendingProps = pendingProps;
 		// 去除之前遗留的副作用
 		wip.flags = NoFlags;
+		wip.subtreeFlags = NoFlags;
 	}
 	wip.type = current.type;
 	wip.updateQueue = current.updateQueue;

@@ -49,6 +49,13 @@ function renderRoot(root: FiberRootNode) {
 			workInProgress = null;
 		}
 	}
+
+	// 此时已经完成了beginWork和completeWork流程
+	// root.current.alternate 指向构建好的一棵完整的fiber tree
+	const finishedWork = root.current.alternate;
+	root.finishedWork = finishedWork;
+
+	commitRoot(root);
 }
 
 function workLoop() {
