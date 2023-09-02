@@ -1,6 +1,7 @@
 import { beginWork } from './beginWork';
 import { completeWork } from './completeWork';
 import { FiberNode, FiberRootNode, createWorkInProgress } from './fiber';
+import { MutationMask, NoFlags } from './fiberFlags';
 import { HostRoot } from './workTags';
 let workInProgress: FiberNode | null = null;
 
@@ -56,6 +57,39 @@ function renderRoot(root: FiberRootNode) {
 	root.finishedWork = finishedWork;
 
 	commitRoot(root);
+}
+
+function commitRoot(root: FiberRootNode) {
+	const finishedWork = root.finishedWork;
+
+	if (!finishedWork) {
+		return;
+	}
+
+	if (__DEV__) {
+		console.warn('commit阶段开始', finishedWork);
+	}
+
+	// 重置
+	root.finishedWork = null;
+
+	// 判断是否存在3个子阶段需要执行的操作（使用masks）
+	// Q: 因为有冒泡（bubbleProperties）操作，所以暂时不明白，为什么subtree和root都要判断flags
+	const subtreeHasEffect =
+		(finishedWork.subtreeFlags & MutationMask) !== NoFlags;
+	const rootHasEffect = (finishedWork.subtreeFlags & MutationMask) !== NoFlags;
+
+	if (subtreeHasEffect || rootHasEffect) {
+		// beforeMutation
+		// mutations
+
+		root.current = finishedWork;
+
+		// layout
+	} else {
+		// 没有更新发生
+		root.current = finishedWork;
+	}
 }
 
 function workLoop() {

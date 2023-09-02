@@ -62,7 +62,7 @@ function appendAllChildren(parent: FiberNode, wip: FiberNode) {
 			continue;
 		}
 
-		// 这段代码目前感觉没有必要，先留着
+		// Q: 这段代码目前感觉没有必要，先留着
 		if (node === wip) {
 			return;
 		}
