@@ -1,5 +1,5 @@
-import { Props, Key, Ref } from 'shared/ReactTypes';
-import { WorkTag } from './workTags';
+import { Props, Key, Ref, ReactElementType } from 'shared/ReactTypes';
+import { FunctionComponent, HostComponent, WorkTag } from './workTags';
 import { Flags, NoFlags } from './fiberFlags';
 import { Container } from 'hostConfig';
 
@@ -16,6 +16,7 @@ export class FiberNode {
 	return: FiberNode | null;
 	sibling: FiberNode | null;
 	child: FiberNode | null;
+	// 同级的fiberNode有好几个，比如一个ul下有多个li，它们的index分别是0、1、2
 	index: number;
 
 	// 工作完成后 / 确定下来的props
@@ -39,7 +40,6 @@ export class FiberNode {
 		this.return = null;
 		this.sibling = null;
 		this.child = null;
-		// 同级的fiberNode有好几个，比如一个ul下有多个li，它们的index分别是0、1、2
 		this.index = 0;
 
 		this.pendingProps = pendingProps;
@@ -94,3 +94,20 @@ export const createWorkInProgress = (
 
 	return wip;
 };
+
+export function createFiberFromElement(element: ReactElementType) {
+	const { type, key, props } = element;
+	let fiberTag: WorkTag = FunctionComponent;
+
+	if (typeof type === 'string') {
+		fiberTag = HostComponent;
+	} else if (typeof type !== 'function' && __DEV__) {
+		console.warn('未定义的type类型', element);
+	}
+
+	// 直接把reactElement的props，作为fiber的pendingProps
+	// 所以updateHostComponent中，直接从pendingProps中获取nextChildren
+	const fiber = new FiberNode(fiberTag, props, key);
+	fiber.type = type;
+	return fiber;
+}

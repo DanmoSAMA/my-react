@@ -6,6 +6,9 @@ import fs from 'fs';
 import ts from 'rollup-plugin-typescript2';
 import cjs from '@rollup/plugin-commonjs';
 
+// 为开发环境增加__DEV__标识
+import replace from '@rollup/plugin-replace';
+
 // 包的路径
 const pkgPath = path.resolve(__dirname, '../../packages');
 // 产物路径
@@ -28,6 +31,9 @@ export function resolvePkgPath(pkgName, isDist) {
 }
 
 // 解构赋值的对象参数，意味着可以传递一个包含 typescript 属性的对象，也可以不传递任何参数
-export function getBaseRollupPlugins({ typescript = {} } = {}) {
-	return [cjs(), ts(typescript)];
+export function getBaseRollupPlugins({
+	alias = { __DEV__: true },
+	typescript = {}
+} = {}) {
+	return [replace(alias), cjs(), ts(typescript)];
 }
