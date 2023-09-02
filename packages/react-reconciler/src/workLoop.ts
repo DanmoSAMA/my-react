@@ -13,7 +13,7 @@ function prepareFreshStack(root: FiberRootNode) {
 
 // 连接刚创建的container，和renderRoot（串联功能）
 export function scheduleUpdateOnFiber(fiber: FiberNode) {
-	// Todo：调度功能
+	// TODO：调度功能
 	//
 	// 无论是哪个结点触发了更新，都要向上遍历到根结点
 	const root = markUpdateFromFiberToRoot(fiber);

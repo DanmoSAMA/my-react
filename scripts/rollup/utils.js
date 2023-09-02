@@ -32,7 +32,7 @@ export function resolvePkgPath(pkgName, isDist) {
 
 // 解构赋值的对象参数，意味着可以传递一个包含 typescript 属性的对象，也可以不传递任何参数
 export function getBaseRollupPlugins({
-	alias = { __DEV__: true },
+	alias = { __DEV__: true, preventAssignment: true },
 	typescript = {}
 } = {}) {
 	return [replace(alias), cjs(), ts(typescript)];

@@ -50,7 +50,7 @@ function ChildReconciler(shouldTrackEffects: boolean) {
 						currentFiber,
 						newChild
 					);
-					placeSingleChild(childFiber);
+					return placeSingleChild(childFiber);
 				default:
 					if (__DEV__) {
 						console.warn('未实现的reconcile类型', newChild);
@@ -66,7 +66,7 @@ function ChildReconciler(shouldTrackEffects: boolean) {
 				currentFiber,
 				newChild
 			);
-			placeSingleChild(childFiber);
+			return placeSingleChild(childFiber);
 		}
 		if (__DEV__) {
 			console.warn('未实现的reconcile类型', newChild);
