@@ -4,14 +4,13 @@ import generatePackageJson from 'rollup-plugin-generate-package-json';
 import alias from '@rollup/plugin-alias';
 
 // 从package.json读出包名
-const { name, module } = getPackageJSON('react-dom');
+const { name, module, peerDependencies } = getPackageJSON('react-dom');
 // 包的路径
 const pkgPath = resolvePkgPath(name);
 // 产物路径
 const pkgDistPath = resolvePkgPath(name, true);
 
 export default [
-	// react
 	{
 		input: `${pkgPath}/${module}`,
 		output: [
@@ -27,6 +26,10 @@ export default [
 				format: 'umd'
 			}
 		],
+		// Reconciler + hostConfig => ReactDOM
+		// 增加数据共享层后，Reconciler与React产生关联，进一步则ReactDOM和React产生关联
+		// 如果打包在一起，会产生两个数据共享层，所以打包要分开
+		external: [...Object.keys(peerDependencies)],
 		plugins: [
 			...getBaseRollupPlugins(),
 			alias({
